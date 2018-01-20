@@ -8,22 +8,22 @@ import sys
 
 from datetime import datetime
 
-from parse import parse_links
-from links import validate_links
-from archive_methods import archive_links, _RESULTS_TOTALS
-from index import (
+from bookmark_archiver.parse import parse_links
+from bookmark_archiver.links import validate_links
+from bookmark_archiver.archive_methods import archive_links, _RESULTS_TOTALS
+from bookmark_archiver.index import (
     write_links_index,
     write_link_index,
     parse_json_links_index,
     parse_json_link_index,
 )
-from config import (
+from bookmark_archiver.config import (
     ARCHIVE_PERMISSIONS,
     HTML_FOLDER,
     ANSI,
     TIMEOUT,
 )
-from util import (
+from bookmark_archiver.util import (
     download_url,
     check_dependencies,
     progress,
