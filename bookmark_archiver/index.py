@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from string import Template
 
-from config import (
+from .config import (
     INDEX_TEMPLATE,
     INDEX_ROW_TEMPLATE,
     LINK_INDEX_TEMPLATE,
@@ -13,7 +13,7 @@ from config import (
     ANSI,
     GIT_SHA,
 )
-from util import (
+from .util import (
     chmod_file,
     html_appended_url,
     derived_link_info,

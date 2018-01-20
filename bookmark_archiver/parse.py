@@ -20,7 +20,7 @@ import json
 
 from datetime import datetime
 
-from util import (
+from .util import (
     domain,
     base_url,
     str_between,

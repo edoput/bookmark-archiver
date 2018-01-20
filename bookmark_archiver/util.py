@@ -9,7 +9,7 @@ from datetime import datetime
 from subprocess import run, PIPE, DEVNULL
 from multiprocessing import Process
 
-from config import (
+from .config import (
     IS_TTY,
     ARCHIVE_PERMISSIONS,
     ARCHIVE_DIR,

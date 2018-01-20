@@ -4,9 +4,9 @@ from functools import wraps
 from datetime import datetime
 from subprocess import run, PIPE, DEVNULL
 
-from index import html_appended_url, parse_json_link_index, write_link_index
-from links import links_after_timestamp
-from config import (
+from .index import html_appended_url, parse_json_link_index, write_link_index
+from .links import links_after_timestamp
+from .config import (
     ARCHIVE_DIR,
     CHROME_BINARY,
     FETCH_WGET,
@@ -23,7 +23,7 @@ from config import (
     TIMEOUT,
     ANSI,
 )
-from util import (
+from .util import (
     check_dependencies,
     progress,
     chmod_file,

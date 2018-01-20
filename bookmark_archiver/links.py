@@ -32,7 +32,7 @@ Link {
 
 """
 
-from util import (
+from .util import (
     domain,
     base_url,
     str_between,
