@@ -44,7 +44,7 @@ TIMEOUT = config['website:pdf']['timeout']
 
 LINK_INDEX_TEMPLATE = config['template']['link index template']
 INDEX_TEMPLATE = config['template']['index template']
-INDEX_ROW_TEMPLATE = config['template']['index row_template']
+INDEX_ROW_TEMPLATE = config['template']['index row template']
 
 # Output Paths
 ROOT_FOLDER = os.path.dirname(os.path.abspath(__file__))
