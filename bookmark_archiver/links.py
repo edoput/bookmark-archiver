@@ -32,6 +32,8 @@ Link {
 
 """
 
+from urllib.parse import urlparse
+
 from .util import (
     domain,
     base_url,
@@ -40,12 +42,14 @@ from .util import (
     merge_links,
 )
 
+allowed_schemes = ('http://', 'https://', 'ftp://')
+
 
 def validate_links(links):
     links = archivable_links(links)  # remove chrome://, about:, mailto: etc.
     links = uniquefied_links(links)  # merge/dedupe duplicate timestamps & urls
     links = sorted_links(links)      # deterministically sort the links based on timstamp, url
-    
+
     if not links:
         print('[X] No links found :(')
         raise SystemExit(1)
@@ -54,12 +58,11 @@ def validate_links(links):
 
 
 def archivable_links(links):
-    """remove chrome://, about:// or other schemed links that cant be archived"""
-    return (
-        link
-        for link in links
-        if any(link['url'].startswith(s) for s in ('http://', 'https://', 'ftp://'))
-    )
+    """
+    Remove chrome://, about:// or other schemed links that cant be archived
+    """
+    return [link for link in links if urlparse(link['url']).scheme in allowed_schemes]
+
 
 def uniquefied_links(sorted_links):
     """

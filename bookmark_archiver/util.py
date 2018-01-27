@@ -8,6 +8,7 @@ import requests
 from datetime import datetime
 from subprocess import run, PIPE, DEVNULL
 from multiprocessing import Process
+from urllib.parse import urlparse, urlunparse
 
 from .config import (
     IS_TTY,
@@ -27,15 +28,37 @@ from .config import (
     SUBMIT_ARCHIVE_DOT_ORG,
 )
 
-# URL helpers
-without_scheme = lambda url: url.replace('http://', '').replace('https://', '').replace('ftp://', '')
-without_query = lambda url: url.split('?', 1)[0]
-without_hash = lambda url: url.split('#', 1)[0]
-without_path = lambda url: url.split('/', 1)[0]
-domain = lambda url: without_hash(without_query(without_path(without_scheme(url))))
-base_url = lambda url: without_query(without_scheme(url))
 
-short_ts = lambda ts: ts.split('.')[0]
+def without_scheme(url):
+    return url.replace('http://', '').replace('https://', '').replace('ftp://', '')
+
+
+def without_query(url):
+    [scheme, netloc, path, params, _, _] = urlparse(url)
+    return urlunparse([scheme, netloc, path, params, '', ''])
+
+
+def without_hash(url):
+    [scheme, netloc, path, params, query, _] = urlparse(url)
+    return urlunparse([scheme, netloc, path, params, query, ''])
+
+
+def without_path(url):
+    return url.split('/', 1)[0]
+
+
+def domain(url):
+    p = urlparse(url)
+    return p.hostname
+
+
+def base_url(url):
+    [scheme, netloc, path, params, query, _] = urlparse(url)
+    return urlunparse(['', netloc, path, params, '', ''])
+
+
+def short_ts(ts):
+    return ts.split('.')[0]
 
 
 def check_dependencies():
@@ -166,16 +189,19 @@ def progress(seconds=TIMEOUT, prefix=''):
 
 
 def download_url(url):
-    """download a given url's content into downloads/domain.txt"""
+    """
+    Download a given url's content into downloads/domain.txt
+    """
 
     download_dir = os.path.join(ARCHIVE_DIR, 'downloads')
 
     if not os.path.exists(download_dir):
         os.makedirs(download_dir)
 
-    url_domain = url.split('/', 3)[2]
-    output_path = os.path.join(download_dir, '{}.txt'.format(url_domain))
-    
+    parsed_url = urlparse(url)
+    location_path = '{}.txt'.format(parsed_url.netloc)
+    output_path = os.path.join(download_dir, location_path)
+
     print('[*] [{}] Downloading {} > {}'.format(
         datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         url,
@@ -234,11 +260,12 @@ def merge_links(a, b):
     url = longer('url')
     longest_title = longer('title')
     cleanest_title = a['title'] if '://' not in a['title'] else b['title']
+    p = urlparse(url)
     link = {
         'timestamp': earlier('timestamp'),
         'url': url,
-        'domain': domain(url),
-        'base_url': base_url(url),
+        'domain': p.netloc,
+        'base_url': '{}{}{}'.format(p.netloc, p.path, p.fragment),
         'tags': longer('tags'),
         'title': longest_title if '://' not in longest_title else cleanest_title,
         'sources': list(set(a.get('sources', []) + b.get('sources', []))),
